@@ -2,8 +2,8 @@
  *	
  *	daranang.c
  *
- *		This program is	
- *			
+ *		This program will take the input file and read and then it will write the data out to
+ *		output files from given command lind
  *
  * 		Created by Lutfee Deemae (Lut) ID 63070503448
  *		4 November 2020
@@ -35,11 +35,11 @@ void printStar(FILE* pFileOutput, MOVIESTAR_T movieStar[], int which);
 int main(int argc,char* argv[])
 {
 	char terminalInput[32]; /* a variable to get a input from terminal that user input */
-	char inputLine[128];
-	int i;
-	FILE *pFileInput = NULL;
-	FILE *pFileOutput = NULL;
-	MOVIESTAR_T movieStar[10];
+	char inputLine[128];	/* a variable to hold line of input from files */
+	int i;	/* a variable for hold a index of looping */
+	FILE *pFileInput = NULL;	/* a files pointer variable for input files target */
+	FILE *pFileOutput = NULL;	/* a files pointer variable for output files target */
+	MOVIESTAR_T movieStar[10];	/* a struct variable for moivestar collection */
 
 	if(argc < 3)
 	{
@@ -88,7 +88,12 @@ void parseStar(char inputLine[], MOVIESTAR_T movieStar[], int which)
 void printStar(FILE* pFileOutput, MOVIESTAR_T movieStar[], int which)
 {
 	int j = which;
-	fprintf(pFileOutput, "Movie star #%d\nName: %s %s\nGender: %c\nNumber of movies: %d\nPopular rating: %d\n\n", j+1, movieStar[j].firstname, movieStar[j].lastname, movieStar[j].gender, movieStar[j].movieCount, movieStar[j].rating);
+	//fprintf(pFileOutput, "Movie star #%d\nName: %s %s\nGender: %c\nNumber of movies: %d\nPopular rating: %d\n\n", j+1, movieStar[j].firstname, movieStar[j].lastname, movieStar[j].gender, movieStar[j].movieCount, movieStar[j].rating);
+	fprintf(pFileOutput, "Movie star #%d\n", j+1);
+	fprintf(pFileOutput, "Name: %s %s\n", movieStar[j].firstname, movieStar[j].lastname);
+	fprintf(pFileOutput, "Gender: %c\n", movieStar[j].gender);
+	fprintf(pFileOutput, "Number of movies: %d\n", movieStar[j].movieCount);
+	fprintf(pFileOutput, "Popular rating: %d\n\n", movieStar[j].rating);
 }
 
 

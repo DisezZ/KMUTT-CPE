@@ -19,6 +19,7 @@
 #include "validations.h"
 #include "writeFile.h"
 #include "readFile.h"
+#include "dataManipulation.h"
 
 char databaseFileName[] = "database.dat";
 
@@ -91,7 +92,7 @@ void handleDisplayAllDataBase()
 	{
 		while (fread(&record, sizeof(HOSPITAL_T), 1, pFileIn) == 1)
 		{
-			printf("Passport: %s-%s\n", record.passportCountryCode, record.passportNumberCode);
+			printf("Passport: %s\n", record.passportNumber);
 			printf("Name: %s\n", record.name);
 			printf("Birth Date: %d/%d/%d\n", record.day, record.month, record.year);
 			printf("Birth Date: %d/%d/%d\n", record.day, record.month, record.year);
@@ -101,7 +102,7 @@ void handleDisplayAllDataBase()
 	}
 	else
 	{
-		printf("Error - Can't open file to display\n")
+		printf("Error - Can't open file to display\n");
 	}
 }
 
@@ -177,7 +178,7 @@ void handleGetAddInformation()
 		}
 	}
 
-	sscanf(passportNumber, "%2s-%s", record_t.passportCountryCode, record_t.passportNumberCode);
+	sscanf(passportNumber, "%s", record_t.passportNumber);
 	sscanf(name, "%[^\n]s", record_t.name);
 	sscanf(birthDate, "%d/%d/%d", &record_t.day, &record_t.month, &record_t.year);
 	handleGetDateNow(&record_t.dayNow, &record_t.monthNow, &record_t.yearNow);
@@ -189,7 +190,43 @@ void handleGetAddInformation()
 
 void handleGetSearchInformation()
 {
-	printf("get search information\n");
+	HOSPITAL_T record;
+	char terminalInput[64];
+	char searched[64];
+	char choice[64];
+
+	while (1)
+	{
+		printf("\n2 choices for searching information\n");
+		printf("1) Search by Passport Number (type \"1\"):\n");
+		printf("2) Seach by Name (type \"2\"):\n");
+		printf("3) Exit (type \"Exit\"):\n");
+		printf("Enter your choice: ");
+		fgets(terminalInput, sizeof(terminalInput), stdin);
+		sscanf(terminalInput, "%s", choice);
+		if (strcasecmp(choice, "1") == 0)
+		{
+			printf("Enter your passport number searching information here: ");
+			fgets(terminalInput, sizeof(terminalInput), stdin);
+			sscanf(terminalInput, "%s", searched);
+			record = handleSearchByPassPortNumber(searched);
+		}
+		else if (strcasecmp(choice, "2") == 0)
+		{
+			printf("Enter your name searching information here: ");
+			fgets(terminalInput, sizeof(terminalInput), stdin);
+			sscanf(terminalInput, "%s", searched);
+			record = handleSearchByName(searched);
+		}
+		else if (strcasecmp(choice, "Exit") == 0)
+		{
+			break;
+		}
+		else
+		{
+			printf("Error try again!\n");
+		}
+	}
 }
 
 void handleGetModifyInformation()

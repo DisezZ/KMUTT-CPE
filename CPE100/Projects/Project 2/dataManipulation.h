@@ -14,8 +14,8 @@
 #include <stdio.h>
 #include "hospital.h"
 
-#ifndef WRITEFILE_H
-#define WRITEFILE_H
+#ifndef MANIPULATION_H
+#define MANIPULATION_H
 
 HOSPITAL_T handleSearchByPassPortNumber(char searched[]);
 

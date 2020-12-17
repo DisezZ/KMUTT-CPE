@@ -19,12 +19,12 @@
 
 int handleAddOneRecord(HOSPITAL_T record)
 {
-    printf("Passport: %s-%s\n", record.passportCountryCode, record.passportNumberCode);
+    /*printf("Passport: %s-%s\n", record.passportCountryCode, record.passportNumberCode);
     printf("Name: %s\n", record.name);
     printf("Birth date: %d/%d/%d\n", record.day, record.month, record.year);
     printf("Now Date: %d/%d/%d\n", record.dayNow, record.monthNow, record.yearNow);
     printf("Phone: %s\n", record.internationalPhone);
-    printf("Gender: %c\n", record.gender);
+    printf("Gender: %c\n", record.gender);*/
 
     FILE *pFileIn = NULL;
     FILE *pFileOut = NULL;

@@ -32,8 +32,7 @@ void handleChangeDatabaseFileName();
 
 typedef struct
 {
-    char passportCountryCode[3];
-    char passportNumberCode[15];
+    char passportNumber[18];
     char name[64];
     char internationalPhone[20];
     char birthDate[11];

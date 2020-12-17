@@ -17,15 +17,16 @@
 #include <ctype.h>
 #include "hospital.h"
 #include "validations.h"
+#include "writeFile.h"
+#include "readFile.h"
+
+char databaseFileName[] = "database.dat";
 
 int main(int argc, char *argv[])
 {
 	char terminalInput[64]; /* a variable to get a input from terminal that user input */
 	char choice[64];
-	char databaseFileName = "database.dat";
 
-	printf("\"%d\" is default database, would you like to change? (y / n): ");s
-	fgets("")
 	while (1)
 	{
 		handleDisplayMenus();
@@ -38,12 +39,14 @@ int main(int argc, char *argv[])
 void handleDisplayMenus()
 {
 	printf("\n***********************************************************************************\n");
-	printf("\tWelcome to Hospital Database Applications\n");
+	printf("\nWelcome to Hospital Database Applications\n");
+	printf("\"%s\" is current database file name \n\n", databaseFileName);
 
-	printf("\tThis is an options that you can do\n\n");
-	printf("\t\t1) Display All Records in Database (Type: \"Display\"):\n");
-	printf("\t\t1) Add Record to the Database (Type: \"Add\"):\n");
-	printf("\t\t1) Search for Record in Database (Type: \"Search\"):\n");
+	printf("Options List: \n");
+	printf("\t1) Display All Records in Database (Type: \"Display\"):\n");
+	printf("\t2) Add Record to the Database (Type: \"Add\"):\n");
+	printf("\t3) Search for Record in Database (Type: \"Search\"):\n");
+	printf("\t4) Change File Name for Database (Type: \"Change\"):\n");
 	printf("\n***********************************************************************************\n");
 	printf("Enter your Option: ");
 }
@@ -68,6 +71,10 @@ void handleMenuSelection(char choice[])
 		printf("Exit now!");
 		exit(0);
 	}
+	else if (!strcasecmp(choice, "Change"))
+	{
+		handleChangeDatabaseFileName();
+	}
 	else
 	{
 		printf("Error - Type again!");
@@ -76,11 +83,34 @@ void handleMenuSelection(char choice[])
 
 void handleDisplayAllDataBase()
 {
-	printf("display all database here\n");
+	FILE *pFileIn = NULL;
+	HOSPITAL_T record;
+	int size = 0;
+	pFileIn = fopen("database.dat", "rb");
+	if (pFileIn != NULL)
+	{
+		while (fread(&record, sizeof(HOSPITAL_T), 1, pFileIn) == 1)
+		{
+			printf("Passport: %s-%s\n", record.passportCountryCode, record.passportNumberCode);
+			printf("Name: %s\n", record.name);
+			printf("Birth Date: %d/%d/%d\n", record.day, record.month, record.year);
+			printf("Birth Date: %d/%d/%d\n", record.day, record.month, record.year);
+			printf("Phone: %s\n", record.internationalPhone);
+			printf("Gender: %c\n", record.gender);
+		}
+	}
+	else
+	{
+		printf("Error - Can't open file to display\n")
+	}
 }
 
 void handleGetAddInformation()
 {
+	int status;
+	HOSPITAL_T *all_record = NULL;
+	HOSPITAL_T **all_record_t = &all_record;
+	HOSPITAL_T record_t;
 	char terminalInput[64]; /* a variable to get a input from terminal that user input */
 	char passportNumber[64];
 	char name[64];
@@ -88,13 +118,14 @@ void handleGetAddInformation()
 	char internationalPhone[64];
 	char genders[16];
 	char gender;
-	printf("\n******6 Steps to Add Information to the Database*******\n");
+	int size;
 
+	printf("\n******6 Steps to Add Information to the Database*******\n");
 	while (1)
 	{
 		printf("1) Please Enter Passport Number: ");
 		fgets(terminalInput, sizeof(terminalInput), stdin);
-		sscanf(terminalInput, "%s", passportNumber);
+		sscanf(terminalInput, "%[^\n]s", passportNumber);
 		if (handlePassportNumberValidation(passportNumber) == 0)
 		{
 			break;
@@ -105,7 +136,7 @@ void handleGetAddInformation()
 	{
 		printf("2) Please Enter Name: ");
 		fgets(terminalInput, sizeof(terminalInput), stdin);
-		sscanf(terminalInput, "%s", name);
+		sscanf(terminalInput, "%[^\n]s", name);
 		if (handleNameValidation(name) == 0)
 		{
 			break;
@@ -116,7 +147,7 @@ void handleGetAddInformation()
 	{
 		printf("3) Please Enter Birth Date: ");
 		fgets(terminalInput, sizeof(terminalInput), stdin);
-		sscanf(terminalInput, "%s", birthDate);
+		sscanf(terminalInput, "%[^\n]s", birthDate);
 		if (handleBirthDateValidation(birthDate) == 0)
 		{
 			break;
@@ -127,7 +158,7 @@ void handleGetAddInformation()
 	{
 		printf("4) Please Enter International Phone: ");
 		fgets(terminalInput, sizeof(terminalInput), stdin);
-		sscanf(terminalInput, "%s", internationalPhone);
+		sscanf(terminalInput, "%[^\n]s", internationalPhone);
 		if (handleInternationalPhoneValidation(internationalPhone) == 0)
 		{
 			break;
@@ -138,14 +169,22 @@ void handleGetAddInformation()
 	{
 		printf("5) Please Enter Gender: ");
 		fgets(terminalInput, sizeof(terminalInput), stdin);
-		sscanf(terminalInput, "%s", genders);
+		sscanf(terminalInput, "%[^\n]s", genders);
 		if (handleGenderValidation(genders) == 0)
 		{
 			sscanf(terminalInput, "%c", &gender);
 			break;
 		}
 	}
-	
+
+	sscanf(passportNumber, "%2s-%s", record_t.passportCountryCode, record_t.passportNumberCode);
+	sscanf(name, "%[^\n]s", record_t.name);
+	sscanf(birthDate, "%d/%d/%d", &record_t.day, &record_t.month, &record_t.year);
+	handleGetDateNow(&record_t.dayNow, &record_t.monthNow, &record_t.yearNow);
+	sscanf(internationalPhone, "%s", record_t.internationalPhone);
+	sscanf(&gender, "%c", &record_t.gender);
+
+	status = handleAddOneRecord(record_t);
 }
 
 void handleGetSearchInformation()
@@ -161,6 +200,15 @@ void handleGetModifyInformation()
 void handleDisplayErrormessage()
 {
 	printf("display error message\n");
+}
+
+void handleChangeDatabaseFileName()
+{
+	char terminalInput[64];
+	printf("Enter your new database file name: ");
+	fgets(terminalInput, sizeof(terminalInput), stdin);
+	sscanf(terminalInput, "%s", terminalInput);
+	strcpy(databaseFileName, terminalInput);
 }
 
 /*********************************************

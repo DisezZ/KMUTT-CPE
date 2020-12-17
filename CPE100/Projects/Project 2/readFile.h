@@ -11,12 +11,13 @@
  ****************************************************************
  */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "hospital.h"
-#include "readFile.h"
 
-int handleReadAllRecords(HOSPITAL_T **all_records)
-{
-    
-}
+#ifndef READFILE_H
+#define READFILE_H
+
+int handleReadAllRecords(HOSPITAL_T** all_records);
+
+int handleCreateNewDatabase(char databaseFileName[]);
+
+#endif

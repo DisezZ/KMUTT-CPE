@@ -12,11 +12,11 @@
  */
 
 #include <stdio.h>
-#include <stdlib.h>
 #include "hospital.h"
-#include "readFile.h"
 
-int handleReadAllRecords(HOSPITAL_T **all_records)
-{
-    
-}
+#ifndef WRITEFILE_H
+#define WRITEFILE_H
+
+int handleAddOneRecord(HOSPITAL_T record);
+
+#endif

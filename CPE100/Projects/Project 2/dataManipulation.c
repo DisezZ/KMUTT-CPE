@@ -13,10 +13,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "dataManipulation.h"
 #include "hospital.h"
+#include "writeFile.h"
 #include "readFile.h"
 
-int handleReadAllRecords(HOSPITAL_T **all_records)
+HOSPITAL_T handleSearchByPassPortNumber(char searched[])
 {
-    
 }
+
+HOSPITAL_T handleSearchByName(char searched[])

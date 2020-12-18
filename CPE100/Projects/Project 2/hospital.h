@@ -24,7 +24,7 @@ void handleGetAddInformation();
 
 void handleGetSearchInformation();
 
-void handleGetModifyInformation();
+void handleGetModifyInformation(char searched[], int size);
 
 void handleDisplatErrorMessage();
 
@@ -38,12 +38,6 @@ typedef struct
     char birthDate[11];
     char nowDate[11];
     char gender;
-    int day;
-    int month;
-    int year;
-    int dayNow;
-    int monthNow;
-    int yearNow;
 } HOSPITAL_T;
 
 #endif

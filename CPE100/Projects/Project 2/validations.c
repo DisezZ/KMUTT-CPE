@@ -250,21 +250,21 @@ int handleDateIsInPastValidation(int day, int month, int year)
     if (year > yearNow)
     {
         dateIsInPastStatus = -1;
-        printf("\tNot Valid - Birth Date must be in the past\n");
+        printf("\tNot Valid - Birth Date must be in the past (year invalid)\n");
     }
-    else
+    else if (year == yearNow)
     {
         if (month > monthNow)
         {
             dateIsInPastStatus = -1;
-            printf("\tNot Valid - Birth Date must be in the past\n");
+            printf("\tNot Valid - Birth Date must be in the past (month invalid)\n");
         }
-        else;
+        else if (month == monthNow)
         {
             if (day >= dayNow)
             {
                 dateIsInPastStatus = -1;
-                printf("\tNot Valid - Birth Date must be in the past\n");
+                printf("\tNot Valid - Birth Date must be in the past (day invalid)\n");
             }
             else
             {
@@ -276,7 +276,6 @@ int handleDateIsInPastValidation(int day, int month, int year)
             }
         }
     }
-
     return dateIsInPastStatus;
 }
 

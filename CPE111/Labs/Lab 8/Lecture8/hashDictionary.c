@@ -1,5 +1,5 @@
 /*  hashDictionary.c
- *
+ *      Challenge #1 and #2 completed!
  *      This program will create dictionary that contain an word and definition
  *      from an input file then will let user ask for specific deinition and 
  *      then print out to terminal
@@ -15,7 +15,7 @@
 #include "abstractHashTable.h"
 #include "timeFunctions.h"
 
-#define BUCKET_COUNT 5003
+#define BUCKET_COUNT 53
 
 /*  This struct will hold dicitonary information such
  *  as word and definition
@@ -23,7 +23,7 @@
 typedef struct
 {
     char word[64];
-    char definition[128];
+    char definition[3][128];
 
 } DIC_ENTRY_T;
 
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 {
     char terminalInput[64]; /* an string for terminal input buffer */
     char word[64];          /* an string for word that user want to find definition */
-    int returnStatus;
+    int returnStatus;       /* an variable to temporary store return status code from functions */
 
     returnStatus = hashTableInit(BUCKET_COUNT, &bitwiseOpHash);
     if (returnStatus == 0)
@@ -80,13 +80,16 @@ void *buildDictionary()
 {
     FILE *pFileIn = NULL;       /* file pointer to a input file */
     DIC_ENTRY_T *pEntry = NULL; /* struct pointer that will hold each dictionary information */
+    DIC_ENTRY_T *pTempt = NULL; /* struct pointer that will use for lookup in hash */
     char inputLine[256];        /* an input buffer for file reading */
     char word[64];              /* an string buffer for word */
     char definition[128];       /* an string buffer for definition */
-    int count = 0;              /* integer for hold number of line */
     int index = 0;              /* integer that will hold index of dictionary */
-    int dummyCollision;
-    int returnStatus;
+    int lineCount = 0;          /* integer for hold number of line */
+    int dummyCollision;         /* an integer to hold collision value */
+    int collisionCount = 0;     /* an integer to hold total collision */
+    int wordCount = 0;          /* an integer to hold total word that succesfully read */
+    int returnStatus;           /* an variable to temporary store return status code from functions */
 
     pFileIn = fopen("wordlist.txt", "r");
     if (pFileIn == NULL)
@@ -99,56 +102,90 @@ void *buildDictionary()
     {
         if (inputLine[0] == '\n' && strlen(inputLine) == 1)
         {
-            ++count;
+            ++lineCount;
             continue;
         }
 
         if (sscanf(inputLine, "%[^|]|%[^\n]", word, definition) != 2)
         {
-            printf("Error - While read file from wordlist.txt at %d line\n", count + 1);
-            ++count;
+            printf("Error - While read file from wordlist.txt at %d line\n", lineCount + 1);
+            ++lineCount;
             continue;
         }
-        ++count;
-        pEntry = calloc(1, sizeof(DIC_ENTRY_T));
-        if (pEntry == NULL)
+        ++lineCount;
+        pTempt = hashTableLookup(word);
+        if (pTempt == NULL)
         {
-            printf("Error - While allocate the memory");
-            exit(0);
-        }
-        strcpy(pEntry->word, word);
-        strcpy(pEntry->definition, definition);
+            pEntry = calloc(1, sizeof(DIC_ENTRY_T));
+            if (pEntry == NULL)
+            {
+                printf("Error - While allocate the memory");
+                exit(0);
+            }
+            strcpy(pEntry->word, word);
+            strcpy(pEntry->definition[0], definition);
 
-        returnStatus = hashTableInsert(pEntry->word, pEntry, &dummyCollision);
-        if (returnStatus == 0)
-        {
-            printf("\tError - While insert %s at line %d to the hash table\n", pEntry->word, count);
+            returnStatus = hashTableInsert(pEntry->word, pEntry, &dummyCollision);
+            if (returnStatus == 0)
+            {
+                printf("\tError - While insert %s at line %d to the hash table\n", pEntry->word, lineCount);
+            }
+            else
+            {
+                ++wordCount;
+                if (dummyCollision == 1)
+                {
+                    ++collisionCount;
+                }
+            }
         }
         else
         {
-            
+            pEntry = pTempt;
+            if (strlen(pEntry->definition[1]) == 0)
+            {
+                strcpy(pEntry->definition[1], definition);
+            }
+            else if (strlen(pEntry->definition[2]) == 0)
+            {
+                strcpy(pEntry->definition[2], definition);
+            }
+            else
+            {
+                printf("\tError - Exceed maximum definition for \"%s\" at line %d\n", pEntry->word, lineCount);
+            }
         }
     }
+    printf("Word: %d\n", wordCount);
+    printf("Collision: %d\n", collisionCount);
+    printf("Collision percentage is: %.2f%%\n\n", (double)collisionCount * 100.0 / (double)wordCount);
     fclose(pFileIn);
 }
 
 void prinDefinitions(char *word)
 {
     DIC_ENTRY_T *pDictData; /* struct pointer that will hold each dictionary information */
-    long time;
+    long time;              /* a integer that will hold time use in milli second */
 
     recordTime(1);
     pDictData = hashTableLookup(word);
     time = recordTime(0);
+    printf("\tLookup required %ld ms\n", time);
     if (pDictData == NULL)
     {
-        printf("\tLookup required %ld\n", time);
         printf("\t%s is not in this dictionary\n\n", word);
     }
     else
     {
-        printf("Found definition for %s, Lookup required %ld ms\n", word, time);
-        printf("\t%s\n", pDictData->definition);
+        printf("\tFound definition for %s\n", word);
+        for (int i = 0; i < 3; i++)
+        {
+            if (strlen(pDictData->definition[i]) == 0)
+            {
+                break;
+            }
+            printf("\t%d)%s\n", i + 1, pDictData->definition[i]);
+        }
     }
 }
 

@@ -1,0 +1,21 @@
+Results.txt
+Name: Lutfee    Deemae  ID: 63070503448
+Date created: 10 April 2021
+
+1) Shortest path from 666 to 777
+Ans:    Min total weight of shortest path: 16
+        Path:
+        '666' ==> '444' ==> '111' ==> '222' ==> '555' ==> '777'
+
+2) Shortest path from 222 to 444
+Ans:    Vertex '444' is not reachable from vertex '222'
+
+3) Shortest path from 555 to 222
+Ans:    Min total weight of shortest path: 17
+        Path:
+        '555' ==> '777' ==> '111' ==> '222'
+
+4) Shortest path from 777 to 555
+Ans:    Min total weight of shortest path: 12
+        Path:
+        '777' ==> '555'
